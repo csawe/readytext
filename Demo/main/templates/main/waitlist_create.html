@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Create new Waitlist
+{% endblock title %}
+
+{% block content %}
+
+    <form method='POST'>
+        {% csrf_token %}
+        {{ form.as_p }} 
+        <input type='submit' value='Save'>
+        <a href='../waitlist'><button type='button' value='save'>Cancel</button></a>
+    </form>
+
+{% endblock content %}

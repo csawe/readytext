@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Messages
+{% endblock title %}
+
+{% block content %}
+
+    <div lass='list-group'>
+        <table table='table table-hover'>
+            <tr>
+                <td>Message Order</td>
+                <td>Delay Time</td>
+                <td>Message Text</td>
+            </tr>
+            {% for message in messages %}
+                <tr>
+                    <td>{{message.message_number}}</td>
+                    <td>{{message.delay}}</td>
+                    <td>{{message.message_text}}</td>
+                    <td>
+                        <form action='' method="POST" id='messageform'>
+                            {% csrf_token %}
+                            <button class="btn btn-success" name='update_id' type='submit' value='{{message.id}}' form='messageform'>Edit</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form action='' method="POST" id='messageform'>
+                            {% csrf_token %}
+                            <button class="btn btn-fail" name='delete_id' type='submit' value='{{message.id}}' form='messageform'>Delete</button>
+                        </form>
+                    </td>
+                </tr>            
+            {% endfor %}
+        </table>
+    </div>
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <a href='../message_create'><button class="btn btn-success">Add New Message</button></a>
+        </div>        
+    </div>
+
+{% endblock content %}

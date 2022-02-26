@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Create a new Custom message
+{% endblock title %}
+
+{% block content %}
+    <form method='POST'>
+        {% csrf_token %}
+        {{ form.as_p }} 
+        <input type='submit' value='Save'>
+        <a href='../message'><button type='button' value='save'>Cancel</button></a>
+    </form>
+
+{% endblock content %}
