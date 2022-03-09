@@ -28,6 +28,12 @@ Waitlist
                             <button class="btn btn-success" name='message-id' type='submit' value='{{obj.id}}' form='messageform'>Message</button>
                         </form>
                     </td>
+                    <td>
+                        <form action='' method="POST" id='messageform'>
+                            {% csrf_token %}
+                            <button class="btn btn-success" name='message-id2' type='submit' value='{{obj.id}}' form='messageform'>re-message</button>
+                        </form>
+                    </td>
 
                     <td>
                         <form action='' method="POST" id='seatedform'>
@@ -41,7 +47,7 @@ Waitlist
                             <button class="btn btn-fail" name='cancel-id' type='submit' value='{{obj.id}}' form='deleteform'>Cancel</button>
                         </form>
                     </td>
-                    
+
                     <td>
                         <form action='' method="POST" id='deleteform'>
                             {% csrf_token %}
@@ -53,7 +59,7 @@ Waitlist
                             {% csrf_token %}
                             <button class="btn btn-fail" name='update-id' type='submit' value='{{obj.id}}' form='updateform'>Edit</button>
                         </form>
-                    </td>   
+                    </td>
                 </tr>
             {% endfor %}
         </table>
@@ -61,7 +67,7 @@ Waitlist
     <div class="input-group mb-3">
         <div class="input-group-prepend">
             <a href='../waitlist_create'><button class="btn btn-success">Add New Waiting</button></a>
-        </div>        
+        </div>
     </div>
 
 {% endblock content %}

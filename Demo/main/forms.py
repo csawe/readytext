@@ -7,17 +7,17 @@ class WaitlistModelForm(forms.ModelForm):
     class Meta:
         model = Waitlist
         fields = ['wait', 'party_name', 'size','phone','note']
-        
+
 class MessageModelForm(forms.ModelForm):
     class Meta:
         model = Message
         fields = ['message_number','delay','message_text']
-        
+
 class ReservationModelForm(forms.ModelForm):
     class Meta:
         model = Reservation
         fields = ['date', 'party_name', 'size', 'phone']
-        
+
 class NewUserForm(UserCreationForm):
     email = forms.EmailField(required=True)
     class Meta:

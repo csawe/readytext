@@ -12,8 +12,16 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
-from dotenv import load_dotenv
-load_dotenv()
+from django.contrib.messages import constants as messages
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'alert-secondary',
+    messages.INFO: 'alert-info',
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger',
+}
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,14 +34,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-8x(8eb$9saz-k-7y(_m1+5g-qc#$ybrop)-^@g-9c!q79%_-q-'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['csawe1.pythonanywhere.com']
 
 #Twilio Account Details
-TWILIO_NUMBER = os.getenv('TWILIO_NUMBER')
-TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID')
-TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
+TWILIO_NUMBER = '+15135966820' #'+17156438609',
+TWILIO_ACCOUNT_SID = 'AC8fdf3bfd0f8982ce2c71c7c46356747d'#'AC623704d4e5fb8ccbd750c885b585df0f'
+TWILIO_AUTH_TOKEN = 'd03e55142bb41d099cecbb014c869451' #'ddf65c4f193ab4dba0e33e6324e44e23'
 
 
 # Application definition
@@ -45,15 +53,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
-    #Custom Apps    
+
+    #Custom Apps
     'main',
-    
+
     #Third Party Apps
-    'crispy_forms', #pip install django-crispy-forms
+    "crispy_forms", #pip install django-crispy-forms
     'phone_field',  #pip install django-phone-field
     #'popup_form' #pip install django-popup-forms
-    
+
 ]
 
 MIDDLEWARE = [
@@ -83,6 +91,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'Demo.wsgi.application'
 
