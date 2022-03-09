@@ -1,3 +1,4 @@
+from urllib.error import HTTPError
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.views.generic import UpdateView
@@ -74,11 +75,14 @@ def send_message(num, text, request):
             print(message.sid)
             return True
         except Exception as ex:
-            messages.error(request, 'An error occured')
+            if HTTPError:
+                messages.error(request, "Cannot send text at this moment. Kindly wait...")
+                print("Chhange twilio sid and auth")
+            else:
+                messages.error(request, 'An error occured')
+                print(ex)
             return redirect('../')
-            print(ex)
-        print(e)
-    return False
+
 
 
 @login_required
@@ -121,21 +125,21 @@ def waitlist_view(request):
             messages.info(request, 'Waitlist deleted')
         elif id_upd:
             obj = Waitlist.objects.get(id=id_upd)
-            messages.success(request, 'Waitlist updated')
             return redirect(f'../waitlist_update/{obj.id}')
         elif id_seated:
             obj = Waitlist.objects.get(id=id_seated)
             obj.checked_in = True
             obj.save()
             obj.delete()
+            messages.success(request, 'Customer has been attended to.')
             return redirect('../waitlist')
         elif id_canncelled:
             obj = Waitlist.objects.get(id=id_canncelled)
             obj.cancelled = True
             obj.save()
             obj.delete()
+            messages.success(request, "Customer has cancelled reservation successfully.")
             return redirect('../waitlist')
-
 
     for waitlist_obj in waitlist:
         now = datetime.now()
@@ -151,7 +155,6 @@ def waitlist_view(request):
     context = {
         'object':waitlist,
     }
-
     while True:
         return render(request, 'main/waitlist_list.html', context)
 
@@ -166,6 +169,7 @@ class WaitlistUpdateView(UpdateView):
     def form_valid(self,form):
         print(form.cleaned_data)
         form.save()
+        messages.success(self.request, 'Waitlist updated')
         return redirect('../waitlist')
 
 #Part three of views
@@ -257,6 +261,8 @@ def user_login_view(request):
                 return redirect('../')
             else:
                 messages.error(request, "Invalid username or password")
+        else:
+            messages.error(request, "Invalid login credentials")    
     form = AuthenticationForm()
     context = {
         'form':form,
@@ -315,7 +321,6 @@ def reservation_view(request):
                 obj.time_message_sent = datetime.now()
             else:
                 messages.error(request,'First message has already been sent')
-
         elif id_num2:
             obj = Waitlist.objects.get(id=id_num)
             if obj.state == True:
@@ -337,12 +342,14 @@ def reservation_view(request):
             obj = Reservation.objects.get(id=id_seated)
             obj.checked_in = True
             obj.save()
+            messages.success(request, 'Customer has been attended to.')
             obj.delete()
             return redirect('../waitlist')
         elif id_canncelled:
             obj = Reservation.objects.get(id=id_canncelled)
             obj.cancelled = True
             obj.save()
+            messages.success(request, "Customer has cancelled reservation successfully.")
             obj.delete()
             return redirect('../waitlist')
     for reservation_obj in reservation:
@@ -374,4 +381,5 @@ class ReservationUpdateView(UpdateView):
     def form_valid(self,form):
         print(form.cleaned_data)
         form.save()
+        messages.success(self.request, "Reservation has successfully updated.")
         return redirect('../reservation')
