@@ -14,7 +14,7 @@ class Waitlist(models.Model):
     #phone = PhoneField()
     #E164_only=False if numbers are from US only.
     phone = PhoneNumberField()
-    note = models.CharField(max_length=20)
+    note = models.CharField(max_length=20, null=True, blank=True)
     state = models.BooleanField(default=False)
     checked_in = models.BooleanField(default=False)
     cancelled = models.BooleanField(default=False)
