@@ -36,7 +36,7 @@ SECRET_KEY = 'django-insecure-8x(8eb$9saz-k-7y(_m1+5g-qc#$ybrop)-^@g-9c!q79%_-q-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['csawe1.pythonanywhere.com','127.0.0.1']
+ALLOWED_HOSTS = ['csawe1.pythonanywhere.com']
 
 #Twilio Account Details
 TWILIO_NUMBER = '+15135966820' #'+17156438609',
