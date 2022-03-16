@@ -8,8 +8,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 
-from main.models import Waitlist, Message, Reservation
-from main.forms import WaitlistModelForm, MessageModelForm, NewUserForm, ReservationModelForm
+from main.models import Waitlist, Message
+from main.forms import WaitlistModelForm, MessageModelForm, NewUserForm
 
 from twilio.rest import Client
 from datetime import datetime
@@ -27,7 +27,9 @@ def home_view(request):
 def waitlist_create(request):
     form = WaitlistModelForm(request.POST or None)
     if form.is_valid():
-        form.save()
+        obj = form.save(commit=False)
+        obj.user = request.user
+        obj.save()
         #Toast a message=, include JS
         waitlist = form.cleaned_data.get('party_name')
         form = WaitlistModelForm()
@@ -36,8 +38,7 @@ def waitlist_create(request):
     else:
         for msg in form.errors:
             messages.error(request, f'{msg}: {form.errors[msg]}')
-        form = WaitlistModelForm()
-
+        
     context={
         'form' : form,
     }
@@ -77,7 +78,7 @@ def send_message(num, text, request):
         except Exception as ex:
             if HTTPError:
                 messages.error(request, "Cannot send text at this moment. Kindly wait...")
-                print("Chhange twilio sid and auth")
+                print("Chhange twilio sid and auth or the numb")
             else:
                 messages.error(request, 'An error occured')
                 print(ex)
@@ -87,7 +88,7 @@ def send_message(num, text, request):
 
 @login_required
 def waitlist_view(request):
-    waitlist = Waitlist.objects.all()
+    waitlist = Waitlist.objects.filter(user=request.user)
     if request.method=='POST':
         id_num = request.POST.get('message-id', None)
         id_num2 = request.POST.get('message-id2', None)
@@ -99,10 +100,12 @@ def waitlist_view(request):
             obj = Waitlist.objects.get(id=id_num)
             if obj.state == False:
                 num = str(obj.phone)
+                name = str(obj.party_name)
                 txt = Message.objects.get(message_number=1)
                 print(txt.message_number)
                 body = txt.message_text
-                state = send_message(num, body, request)
+                body = "Hello "+name+", "+body
+                state = send_message(num, body,request)
                 if state == True:
                     obj.state = True
                     obj.save()
@@ -113,9 +116,11 @@ def waitlist_view(request):
             obj = Waitlist.objects.get(id=id_num)
             if obj.state==True:
                 num = str(obj.phone)
+                name = str(obj.party_name)
                 txt = Message.objects.get(message_number=2)
                 print(txt.message_number)
                 body = txt.message_text
+                body = "Hello "+name+", "+body
                 send_message(num, body, request)
                 obj.time_message_sent = datetime.now()
         elif id_del:
@@ -177,12 +182,14 @@ class WaitlistUpdateView(UpdateView):
 
 def message_create(request):
     form = MessageModelForm(request.POST or None)
-    message_tally = Message.objects.all()
+    message_tally = Message.objects.filter(user=request.user)
     message_tally = message_tally.count()
     print(message_tally)
     if message_tally < 2:
         if form.is_valid():
-            form.save()
+            obj = form.save(commit=False)
+            obj.user = request.user
+            obj.save()
             form = MessageModelForm()
             return redirect('../message')
         else:
@@ -199,7 +206,7 @@ def message_create(request):
 
 @login_required
 def message_view(request):
-    texts = Message.objects.all()
+    texts = Message.objects.filter(user=request.user)
 
     if request.method =='POST':
         del_num = request.POST.get('delete_id', None)
@@ -241,7 +248,7 @@ def user_register_view(request):
     if form.is_valid():
         user = form.save()
         login(request, user)
-        messages.SUCCESS(request, "Registration Successful")
+        messages.success(request, "Registration Successful")
         return redirect('../')
     context = {
         'form':form,
@@ -273,113 +280,3 @@ def user_logout_view(request):
     logout(request)
     messages.info(request, 'You have successfully logged out')
     return redirect('../')
-
-#Part five
-#Handles views that deal with reservations
-
-def reservation_create(request):
-    form = ReservationModelForm(request.POST or None)
-    if form.is_valid():
-        form.save()
-        reserve = form.cleaned_data.get('party_name')
-        form = ReservationModelForm()
-        messages.success(request, f"New reservation created for {reserve}")
-        return redirect('../reservation')
-
-    else:
-        messages.error(request, 'Invalid details. Make sure date is in format %d%m%Y')
-        #for msg in form.errors:
-        #    messages.error(request, f'{msg}: {form.errors[msg]}')
-        form = ReservationModelForm()
-
-    context={
-        'form' : form,
-    }
-    return render(request, 'main/reservation_create.html', context)
-
-@login_required
-def reservation_view(request):
-    reservation = Reservation.objects.all()
-    if request.method=='POST':
-        id_num = request.POST.get('message-id', None)
-        id_num2 = request.POST.get('message-id2', None)
-        id_del = request.POST.get('delete-id', None)
-        id_upd = request.POST.get('update-id', None)
-        id_seated = request.POST.get('seated-id', None)
-        id_canncelled = request.POST.get('cancel-id', None)
-        if id_num:
-            obj = Reservation.objects.get(id=id_num)
-            if obj.state == False:
-                num = str(obj.phone)
-                txt = Message.objects.get(message_number=1)
-                print(txt.message_number)
-                body = txt.message_text
-                state = send_message(num, body, request)
-                if state == False:
-                    obj.state = True
-                    obj.save()
-                obj.time_message_sent = datetime.now()
-            else:
-                messages.error(request,'First message has already been sent')
-        elif id_num2:
-            obj = Waitlist.objects.get(id=id_num)
-            if obj.state == True:
-                num = str(obj.phone)
-                txt = Message.objects.get(message_number=2)
-                print(txt.message_number)
-                body = txt.message_text
-                send_message(num, body)
-                messages.success(request, 'Message sent')
-                obj.time_message_sent = datetime.now()
-        elif id_del:
-            obj = Reservation.objects.get(id=id_del)
-            print(f'Deleting {obj.party_name}')
-            obj.delete()
-        elif id_upd:
-            obj = Reservation.objects.get(id=id_upd)
-            return redirect(f'../waitlist_update/{obj.id}')
-        elif id_seated:
-            obj = Reservation.objects.get(id=id_seated)
-            obj.checked_in = True
-            obj.save()
-            messages.success(request, 'Customer has been attended to.')
-            obj.delete()
-            return redirect('../waitlist')
-        elif id_canncelled:
-            obj = Reservation.objects.get(id=id_canncelled)
-            obj.cancelled = True
-            obj.save()
-            messages.success(request, "Customer has cancelled reservation successfully.")
-            obj.delete()
-            return redirect('../waitlist')
-    for reservation_obj in reservation:
-        now = datetime.now()
-        try:
-            ts = (reservation_obj.time_message_sent).minute or None
-            diff = (now.minute) - ts
-            if diff > 5:
-                text = Message.objects.get(message_number=2)
-                body = text.message_text
-                send_message(str(reservation_obj.phone), body)
-        except AttributeError:
-            continue
-    context = {
-        'object':reservation,
-    }
-
-    while True:
-        return render(request, 'main/reservation_list.html', context)
-
-class ReservationUpdateView(UpdateView):
-    form_class = ReservationModelForm
-    template_name = 'main/reservation_update.html'
-
-    def get_object(self):
-        id = self.kwargs.get("id")
-        return get_object_or_404(Reservation, id=id)
-
-    def form_valid(self,form):
-        print(form.cleaned_data)
-        form.save()
-        messages.success(self.request, "Reservation has successfully updated.")
-        return redirect('../reservation')

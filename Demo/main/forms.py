@@ -1,22 +1,20 @@
 from django import forms
-from .models import Waitlist, Message, Reservation
+from .models import Waitlist, Message
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
 class WaitlistModelForm(forms.ModelForm):
     class Meta:
         model = Waitlist
-        fields = ['wait', 'party_name', 'size','phone','note']
+        fields = ['wait', 'party_name', 'size', 'date', 'phone', 'note']
+        widgets = {
+            'date': forms.DateInput(attrs={"type":"date"})
+        }
 
 class MessageModelForm(forms.ModelForm):
     class Meta:
         model = Message
-        fields = ['message_number','delay','message_text']
-
-class ReservationModelForm(forms.ModelForm):
-    class Meta:
-        model = Reservation
-        fields = ['date', 'party_name', 'size', 'phone']
+        fields = ['message_number','delay','message_text', 'message_context']
 
 class NewUserForm(UserCreationForm):
     email = forms.EmailField(required=True)

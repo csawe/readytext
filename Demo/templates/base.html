@@ -58,13 +58,11 @@
           {% if user.is_authenticated %}
             <p>Welcome {{user.username}}</p>
             <a href='/logout'>Logout</a>
+            <a href="/waitlist">Wait List</a>
+        <a href="/message">Settings</a>
+        <a href="/">Reports</a>
           {% endif %}
         </div>
-        <a href="/waitlist">Wait List</a>
-        <a href="/reservation">Reservations</a>
-        <a href="/message">Messages</a>
-        <a href="/">Settings</a>
-        <a href="/">Reports</a>
     </div>
   <!-- Page content -->
   <div class="main">
@@ -82,7 +80,7 @@
         {% endfor %}
       {% endif %}
 
-        <h1 class="mt-2">TableReadyText</h1>
+        <h4 class="mt-2">Welcome to Table Ready Texting by Lily Miller & Media By Miller</h4>
         <hr class="mt-0 mb-4">
         {% block content %}
         {% endblock %}

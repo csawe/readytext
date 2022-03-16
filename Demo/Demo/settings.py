@@ -36,12 +36,12 @@ SECRET_KEY = 'django-insecure-8x(8eb$9saz-k-7y(_m1+5g-qc#$ybrop)-^@g-9c!q79%_-q-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['csawe1.pythonanywhere.com']
+ALLOWED_HOSTS = ['csawe1.pythonanywhere.com', '127.0.0.1' ]
 
 #Twilio Account Details
 TWILIO_NUMBER = '+15135966820' #'+17156438609',
-TWILIO_ACCOUNT_SID = 'AC8fdf3bfd0f8982ce2c71c7c46356747d'#'AC623704d4e5fb8ccbd750c885b585df0f'
-TWILIO_AUTH_TOKEN = 'd03e55142bb41d099cecbb014c869451' #'ddf65c4f193ab4dba0e33e6324e44e23'
+TWILIO_ACCOUNT_SID = ''
+TWILIO_AUTH_TOKEN = ''
 
 
 # Application definition

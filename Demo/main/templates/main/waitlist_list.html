@@ -13,15 +13,13 @@ Waitlist
                 <td>Name</td>
                 <td>Phone</td>
                 <td>Size</td>
-                <td>State</td>
             </tr>
             {% for obj in object %}
                 <tr>
                     <td>{{obj.wait}}</td>
                     <td>{{obj.party_name}}</td>
-                    <td>{{obj.id}}</td>
+                    <td>{{obj.phone}}</td>
                     <td>{{obj.size}}</td>
-                    <td>{{obj.state}}</td>
                     <td>
                         <form action='' method="POST" id='messageform'>
                             {% csrf_token %}
@@ -66,7 +64,7 @@ Waitlist
     </div>
     <div class="input-group mb-3">
         <div class="input-group-prepend">
-            <a href='../waitlist_create'><button class="btn btn-success">Add New Waiting</button></a>
+            <a href='../waitlist_create'><button class="btn btn-success">Add New Wait</button></a>
         </div>
     </div>
 
