@@ -84,8 +84,6 @@ def send_message(num, text, request):
                 print(ex)
             return redirect('../')
 
-
-
 @login_required
 def waitlist_view(request):
     waitlist = Waitlist.objects.filter(user=request.user)
@@ -101,7 +99,7 @@ def waitlist_view(request):
             if obj.state == False:
                 num = str(obj.phone)
                 name = str(obj.party_name)
-                txt = Message.objects.get(message_number=1)
+                txt = Message.objects.filter(user=request.user).get(id=1)
                 print(txt.message_number)
                 body = txt.message_text
                 body = "Hello "+name+", "+body
@@ -117,7 +115,7 @@ def waitlist_view(request):
             if obj.state==True:
                 num = str(obj.phone)
                 name = str(obj.party_name)
-                txt = Message.objects.get(message_number=2)
+                txt = Message.objects.filter(user=request.user).get(id=2)
                 print(txt.message_number)
                 body = txt.message_text
                 body = "Hello "+name+", "+body
@@ -207,23 +205,21 @@ def message_create(request):
 @login_required
 def message_view(request):
     texts = Message.objects.filter(user=request.user)
+    one = texts[0]
+    two = texts[1]
 
     if request.method =='POST':
-        del_num = request.POST.get('delete_id', None)
-        upd_num = request.POST.get('update_id', None)
-        if del_num:
-            obj = Message.objects.get(id=del_num)
-            print(obj.message_text)
-            print(f'Deleting message {obj.message_text}')
-            obj.delete()
-        elif upd_num:
-            obj = Message.objects.get(id=upd_num)
-            return redirect(f'../message_update/{obj.id}')
-        else:
-            print(request.POST)
-
+        one_text = request.POST.get('one_text')
+        two_text = request.POST.get('two_text')
+        one_text = " ".join(one_text.split())
+        two_text = " ".join(two_text.split())
+        one.message_text = one_text
+        two.message_text = two_text
+        one.save()
+        two.save()
     context = {
-        'texts': texts,
+        'one': one,
+        'two': two,
     }
     return render(request, 'main/message_list.html', context)
 
@@ -249,6 +245,10 @@ def user_register_view(request):
         user = form.save()
         login(request, user)
         messages.success(request, "Registration Successful")
+        one = Message(message_number=1, message_text="", user=request.user)
+        two = Message(message_number=2, message_text="", user=request.user)
+        one.save()
+        two.save()
         return redirect('../')
     context = {
         'form':form,

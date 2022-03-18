@@ -10,7 +10,6 @@ class Waitlist(models.Model):
     wait = models.IntegerField()
     party_name = models.CharField(max_length=20)
     size = models.IntegerField()
-    date = models.DateTimeField()
     #phone = PhoneField()
     #E164_only=False if numbers are from US only.
     phone = PhoneNumberField()
@@ -25,8 +24,6 @@ class Waitlist(models.Model):
 
 class Message(models.Model):
     message_number = models.IntegerField()
-    delay =  models.IntegerField()
     message_text = models.CharField(max_length=200)
-    message_context = models.CharField(max_length=200)
     user = models.ForeignKey(User, on_delete=models.SET_DEFAULT, default=None)
 

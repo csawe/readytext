@@ -6,15 +6,12 @@ from django.contrib.auth.models import User
 class WaitlistModelForm(forms.ModelForm):
     class Meta:
         model = Waitlist
-        fields = ['wait', 'party_name', 'size', 'date', 'phone', 'note']
-        widgets = {
-            'date': forms.DateInput(attrs={"type":"date"})
-        }
+        fields = ['wait', 'party_name', 'size', 'phone', 'note']
 
 class MessageModelForm(forms.ModelForm):
     class Meta:
         model = Message
-        fields = ['message_number','delay','message_text', 'message_context']
+        fields = ['message_text']
 
 class NewUserForm(UserCreationForm):
     email = forms.EmailField(required=True)

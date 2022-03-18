@@ -7,25 +7,28 @@ Messages
 
 {% block content %}
     <div>
-        {% if texts %}
-            {% for text in texts %}
+        <p>
+            
+            <form method="POST">
+                {% csrf_token %}
                 <p>
-                    <h4>Context: </h4>{{text.message_context}}
-                    <p>
-                        <h3>Message Body:</h3>
-                        <p><h4>{{text.message_text}}</h4></p>
-                    </p>
-                    <br>
-                    <form action='' method="POST" id='textform'>
-                        {% csrf_token %}
-                        <button class="btn btn-success" name='update_id' type='submit' value='{{text.id}}' form='textform'>Edit</button>
-                    </form>
+                    <h3>Enter message sent when table is ready</h3>
+                    <h4>Message Body:</h4>
+                    <textarea rows="3" cols="100" name="one_text">
+                        {{one.message_text}}
+                    </textarea>
                 </p>
-            {% endfor %}
-        {% else %}
-                <button><a href="../message_create">Add Messages</a></button>
-        {% endif %}
-        
+                <p>
+                    <h3>Enter message sent when customer doesn't respond.</h3>
+                    <h4>Message Body:</h4>
+                    <textarea rows="3" cols="100" name="two_text">
+                        {{two.message_text}}
+                    </textarea>
+                </p>
+                <br>
+                <button class="btn btn-success" name='id' type='submit'>Save</button>
+            </form>
+        </p>
     </div>
 
 {% endblock content %}
